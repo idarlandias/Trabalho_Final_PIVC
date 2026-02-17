@@ -66,6 +66,35 @@ O DenseNet121 com fine-tuning parcial obteve o melhor equilíbrio entre sensibil
 - **matplotlib / seaborn** — Visualizações
 - **NumPy / Pandas** — Manipulação de dados
 
+## Aplicação Desktop (Executável Windows)
+
+O projeto inclui uma **interface gráfica** para testar o classificador na prática com qualquer imagem de raio-X.
+
+<p align="center">
+  <strong>app.py</strong> — Interface Tkinter com o modelo DenseNet121 (Exp3)
+</p>
+
+**Funcionalidades:**
+- Carregar qualquer imagem de raio-X (.jpeg, .jpg, .png)
+- Classificação automática: **NORMAL** ou **PNEUMONIA**
+- Exibição da probabilidade e barra de confiança visual
+- Indicador verde (Normal) / vermelho (Pneumonia)
+
+**Como usar:**
+```bash
+# Rodar diretamente com Python
+python app.py
+
+# Ou gerar o executável Windows (.exe)
+pip install pyinstaller
+python build_exe.py
+
+# O executável será gerado em:
+# dist/ClassificadorPneumonia/ClassificadorPneumonia.exe
+```
+
+> O executável funciona de forma standalone — basta abrir o `.exe`, carregar uma imagem e clicar em "Classificar".
+
 ## Estrutura do Projeto
 
 ```
@@ -74,6 +103,8 @@ Trabalho_Final_PIVC/
 ├── train.py                     # Script de treinamento
 ├── evaluate.py                  # Script de avaliação
 ├── utils.py                     # Funções auxiliares
+├── app.py                       # Aplicação GUI (classificador)
+├── build_exe.py                 # Script para gerar executável Windows
 ├── Trabalho_Final_PIVC.ipynb    # Notebook Jupyter
 ├── index.html                   # Página de apresentação
 ├── data/chest_xray/             # Dataset (não incluído no repo)
@@ -99,6 +130,9 @@ python train.py --exp exp1       # Apenas experimento 1
 # 3. Avaliar no conjunto de teste
 python evaluate.py               # Todos os experimentos
 python evaluate.py --exp exp3    # Apenas experimento 3
+
+# 4. Testar o classificador com a interface gráfica
+python app.py
 ```
 
 ## Principais Conclusões
