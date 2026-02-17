@@ -433,6 +433,63 @@
             font-size: 0.8rem;
         }
 
+        /* Download button */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(26, 82, 118, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 82, 118, 0.4);
+        }
+
+        .download-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .notebook-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .notebook-details {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .notebook-details ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 12px;
+        }
+
+        .notebook-details ul li {
+            padding: 6px 0;
+            color: var(--text);
+            font-size: 0.92rem;
+        }
+
+        .notebook-details ul li::before {
+            content: "✓ ";
+            color: var(--accent);
+            font-weight: 700;
+        }
+
         /* Footer */
         .footer {
             background: var(--primary);
@@ -478,6 +535,7 @@
         <a href="#resultados">Resultados</a>
         <a href="#visualizacoes">Visualizações</a>
         <a href="#conclusao">Conclusão</a>
+        <a href="#notebook">Notebook</a>
     </div>
 </nav>
 
@@ -1004,6 +1062,57 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;├── exp2/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Resultados do Experimento 2</span><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;├── exp3/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Resultados do Experimento 3</span><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;└── comparison.csv &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Tabela comparativa</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Notebook -->
+<section id="notebook">
+    <div class="container">
+        <h2>Notebook do Projeto</h2>
+
+        <div class="card">
+            <div class="notebook-info">
+                <div class="notebook-details">
+                    <h3>Trabalho_Final_PIVC.ipynb</h3>
+                    <p style="color: var(--text-light); margin-top: 6px;">Notebook Jupyter com todo o código, análises e visualizações do projeto.</p>
+                    <ul>
+                        <li>Carregamento e exploração do dataset</li>
+                        <li>Pré-processamento e Data Augmentation</li>
+                        <li>Treinamento dos 3 experimentos</li>
+                        <li>Avaliação com métricas completas</li>
+                        <li>Visualizações e análise comparativa</li>
+                    </ul>
+                </div>
+                <div style="text-align: center;">
+                    <a href="Trabalho_Final_PIVC.ipynb" download class="download-btn">
+                        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        Download do Notebook
+                    </a>
+                    <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 12px;">Arquivo .ipynb — Abrir com Jupyter Notebook ou VS Code</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 16px;">
+            <h3>Como visualizar o notebook</h3>
+            <div class="grid-3">
+                <div style="text-align: center; padding: 16px;">
+                    <div style="font-size: 1.6rem; margin-bottom: 8px;">1</div>
+                    <strong>Jupyter Notebook</strong>
+                    <p style="font-size: 0.82rem; color: var(--text-light); margin-top: 6px;">Abrir com <code>jupyter notebook</code> no terminal</p>
+                </div>
+                <div style="text-align: center; padding: 16px;">
+                    <div style="font-size: 1.6rem; margin-bottom: 8px;">2</div>
+                    <strong>VS Code</strong>
+                    <p style="font-size: 0.82rem; color: var(--text-light); margin-top: 6px;">Abrir diretamente com a extensão Jupyter</p>
+                </div>
+                <div style="text-align: center; padding: 16px;">
+                    <div style="font-size: 1.6rem; margin-bottom: 8px;">3</div>
+                    <strong>Google Colab</strong>
+                    <p style="font-size: 0.82rem; color: var(--text-light); margin-top: 6px;">Fazer upload do .ipynb no <a href="https://colab.research.google.com/" target="_blank" style="color: var(--primary-light);">colab.google.com</a></p>
+                </div>
             </div>
         </div>
     </div>
