@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabalho Final PIVC - Classificação de Pneumonia em Raio-X</title>
+    <style>
+        :root {
+            --primary: #1a5276;
+            --primary-light: #2980b9;
+            --accent: #27ae60;
+            --bg: #f4f6f9;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --border: #e0e6ed;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.4rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.15rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 18px;
+            border-radius: 20px;
+            margin-top: 18px;
+            font-size: 0.9rem;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        nav .container {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-light);
+            padding: 16px 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+            border-bottom-color: var(--primary-light);
+        }
+
+        /* Sections */
+        section {
+            padding: 50px 0;
+        }
+
+        section h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 30px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--primary-light);
+            display: inline-block;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* Grid layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        /* Overview stats */
+        .stat-box {
+            text-align: center;
+            padding: 24px 16px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .stat-box .number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .stat-box .label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* Experiment cards */
+        .exp-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .exp-card .exp-header {
+            padding: 20px 24px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .exp-card:nth-child(1) .exp-header { background: #2c3e50; }
+        .exp-card:nth-child(2) .exp-header { background: #2980b9; }
+        .exp-card:nth-child(3) .exp-header { background: #27ae60; }
+
+        .exp-card .exp-body {
+            padding: 24px;
+        }
+
+        .exp-card .config-table {
+            width: 100%;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        .config-table td {
+            padding: 6px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .config-table td:first-child {
+            color: var(--text-light);
+            width: 55%;
+        }
+
+        .config-table td:last-child {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* Metrics highlight */
+        .metric-highlight {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .metric-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px 6px;
+            background: #f8f9fb;
+            border-radius: 8px;
+        }
+
+        .metric-item .val {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .metric-item .name {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Comparison table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table th {
+            background: var(--primary);
+            color: white;
+            padding: 14px 16px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.82rem;
+        }
+
+        .comparison-table th:first-child {
+            text-align: left;
+            border-radius: 8px 0 0 0;
+        }
+
+        .comparison-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .comparison-table td {
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .comparison-table tr:hover {
+            background: #f0f5ff;
+        }
+
+        .comparison-table .best {
+            background: #d4efdf;
+            font-weight: 700;
+            color: #1e8449;
+            border-radius: 4px;
+        }
+
+        .winner-row {
+            background: #eafaf1 !important;
+        }
+
+        /* Images */
+        .img-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .img-container .caption {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 0;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary-light);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 24px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Pipeline */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .pipeline-step {
+            background: var(--card-bg);
+            border: 2px solid var(--primary-light);
+            border-radius: 12px;
+            padding: 20px 24px;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: var(--shadow);
+        }
+
+        .pipeline-step .step-title {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .pipeline-step .step-desc {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .pipeline-arrow {
+            font-size: 1.6rem;
+            color: var(--primary-light);
+            padding: 0 8px;
+        }
+
+        /* Tech stack */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .tech-tag {
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: #eaf2f8;
+            color: var(--primary);
+            border: 1px solid #d4e6f1;
+        }
+
+        /* Confusion matrix visual */
+        .cm-grid {
+            display: grid;
+            grid-template-columns: auto 1fr 1fr;
+            grid-template-rows: auto 1fr 1fr;
+            gap: 4px;
+            max-width: 300px;
+            margin: 0 auto;
+            font-size: 0.85rem;
+        }
+
+        .cm-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .cm-tp { background: #d5f5e3; color: #1e8449; }
+        .cm-tn { background: #d5f5e3; color: #1e8449; }
+        .cm-fp { background: #fadbd8; color: #c0392b; }
+        .cm-fn { background: #fadbd8; color: #c0392b; }
+        .cm-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary);
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 0.85rem;
+        }
+
+        .footer strong {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.6rem; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .pipeline { flex-direction: column; }
+            .pipeline-arrow { transform: rotate(90deg); }
+            nav .container { gap: 0; }
+            nav a { padding: 12px 14px; font-size: 0.8rem; }
+            .metric-highlight { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <div class="container">
+        <h1>Classificação de Pneumonia em Raio-X de Tórax</h1>
+        <p>Projeto de Transfer Learning com Redes Neurais Convolucionais para detecção automatizada de pneumonia em imagens de raio-X</p>
+        <span class="badge">Trabalho Final - PIVC</span>
+    </div>
+</header>
+
+<!-- Navigation -->
+<nav>
+    <div class="container">
+        <a href="#visao-geral">Visão Geral</a>
+        <a href="#metodologia">Metodologia</a>
+        <a href="#experimentos">Experimentos</a>
+        <a href="#resultados">Resultados</a>
+        <a href="#visualizacoes">Visualizações</a>
+        <a href="#conclusao">Conclusão</a>
+    </div>
+</nav>
+
+<!-- Visão Geral -->
+<section id="visao-geral">
+    <div class="container">
+        <h2>Visão Geral do Projeto</h2>
+
+        <div class="card">
+            <h3>Objetivo</h3>
+            <p>Desenvolver e comparar modelos de Deep Learning baseados em <strong>Transfer Learning</strong> para classificação binária de imagens de raio-X de tórax entre <strong>Normal</strong> e <strong>Pneumonia</strong>. O projeto explora diferentes estratégias de fine-tuning utilizando arquiteturas pré-treinadas no ImageNet.</p>
+        </div>
+
+        <div class="grid-3" style="margin-top: 24px;">
+            <div class="stat-box">
+                <div class="number">5.856</div>
+                <div class="label">Imagens no Dataset</div>
+            </div>
+            <div class="stat-box">
+                <div class="number">3</div>
+                <div class="label">Experimentos Realizados</div>
+            </div>
+            <div class="stat-box">
+                <div class="number">96,78%</div>
+                <div class="label">Melhor AUC-ROC</div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 24px;">
+            <h3>Dataset</h3>
+            <p>Utilizamos o dataset <strong>Chest X-Ray Images (Pneumonia)</strong> do Kaggle, contendo imagens de raio-X de tórax de pacientes pediátricos organizadas em duas classes.</p>
+            <div class="grid-3" style="margin-top: 16px;">
+                <div style="text-align: center; padding: 16px; background: #f8f9fb; border-radius: 8px;">
+                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--primary);">5.216</div>
+                    <div style="font-size: 0.82rem; color: var(--text-light);">Treino</div>
+                </div>
+                <div style="text-align: center; padding: 16px; background: #f8f9fb; border-radius: 8px;">
+                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--primary);">16</div>
+                    <div style="font-size: 0.82rem; color: var(--text-light);">Validação</div>
+                </div>
+                <div style="text-align: center; padding: 16px; background: #f8f9fb; border-radius: 8px;">
+                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--primary);">624</div>
+                    <div style="font-size: 0.82rem; color: var(--text-light);">Teste</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Tecnologias Utilizadas</h3>
+            <div class="tech-stack">
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">PyTorch</span>
+                <span class="tech-tag">torchvision</span>
+                <span class="tech-tag">scikit-learn</span>
+                <span class="tech-tag">matplotlib</span>
+                <span class="tech-tag">seaborn</span>
+                <span class="tech-tag">NumPy</span>
+                <span class="tech-tag">Pandas</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Metodologia -->
+<section id="metodologia" style="background: white;">
+    <div class="container">
+        <h2>Metodologia</h2>
+
+        <div class="card">
+            <h3>Pipeline do Projeto</h3>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <div class="step-title">Dataset</div>
+                    <div class="step-desc">Chest X-Ray<br>Kaggle</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="step-title">Pré-processamento</div>
+                    <div class="step-desc">Resize 224x224<br>Normalização ImageNet</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="step-title">Augmentation</div>
+                    <div class="step-desc">Flip, Rotação<br>Color Jitter</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="step-title">Transfer Learning</div>
+                    <div class="step-desc">ResNet50 / DenseNet121<br>Pré-treinados ImageNet</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="step-title">Avaliação</div>
+                    <div class="step-desc">Métricas, ROC<br>Matriz de Confusão</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h3>Data Augmentation (Treino)</h3>
+                <table class="config-table">
+                    <tr><td>Horizontal Flip</td><td>p = 0.5</td></tr>
+                    <tr><td>Rotação</td><td>±15°</td></tr>
+                    <tr><td>Brightness Jitter</td><td>±0.2</td></tr>
+                    <tr><td>Contrast Jitter</td><td>±0.2</td></tr>
+                    <tr><td>Normalização</td><td>ImageNet (mean/std)</td></tr>
+                    <tr><td>Resolução</td><td>224 × 224 px</td></tr>
+                </table>
+            </div>
+            <div class="card">
+                <h3>Estratégias de Treinamento</h3>
+                <table class="config-table">
+                    <tr><td>Loss Function</td><td>BCEWithLogitsLoss</td></tr>
+                    <tr><td>Class Weights</td><td>Balanceamento automático</td></tr>
+                    <tr><td>Optimizer</td><td>Adam</td></tr>
+                    <tr><td>LR Scheduler</td><td>ReduceLROnPlateau</td></tr>
+                    <tr><td>Early Stopping</td><td>Patience = 10</td></tr>
+                    <tr><td>Seed</td><td>42 (reprodutibilidade)</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Arquitetura do Classificador</h3>
+            <p>O classificador final substituído nas redes pré-treinadas possui a seguinte arquitetura:</p>
+            <div style="background: #f8f9fb; padding: 20px; border-radius: 8px; margin-top: 12px; font-family: 'Courier New', monospace; font-size: 0.9rem; line-height: 2;">
+                Linear(in_features, 512) → ReLU → Dropout(0.5)<br>
+                Linear(512, 256) → ReLU → Dropout(0.3)<br>
+                Linear(256, 1) → <em style="color: var(--text-light);">(BCEWithLogitsLoss aplica sigmoid)</em>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Experimentos -->
+<section id="experimentos">
+    <div class="container">
+        <h2>Experimentos</h2>
+
+        <div class="grid-3">
+            <!-- Exp 1 -->
+            <div class="exp-card">
+                <div class="exp-header">Experimento 1 — Feature Extraction</div>
+                <div class="exp-body">
+                    <table class="config-table">
+                        <tr><td>Modelo Base</td><td>ResNet50</td></tr>
+                        <tr><td>Estratégia</td><td>Feature Extraction</td></tr>
+                        <tr><td>Camadas Descongeladas</td><td>0 (todas congeladas)</td></tr>
+                        <tr><td>Learning Rate</td><td>0.001</td></tr>
+                        <tr><td>Batch Size</td><td>32</td></tr>
+                        <tr><td>Épocas Treinadas</td><td>11 / 30</td></tr>
+                    </table>
+                    <p style="font-size: 0.82rem; color: var(--text-light); margin-top: 8px;">Todas as camadas convolucionais congeladas. Apenas o classificador final é treinado.</p>
+                    <div class="metric-highlight">
+                        <div class="metric-item">
+                            <div class="val">84,78%</div>
+                            <div class="name">Accuracy</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="val">86,90%</div>
+                            <div class="name">F1-Score</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="val">93,19%</div>
+                            <div class="name">AUC-ROC</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exp 2 -->
+            <div class="exp-card">
+                <div class="exp-header">Experimento 2 — Fine-Tuning Parcial</div>
+                <div class="exp-body">
+                    <table class="config-table">
+                        <tr><td>Modelo Base</td><td>ResNet50</td></tr>
+                        <tr><td>Estratégia</td><td>Fine-Tuning Parcial</td></tr>
+                        <tr><td>Camadas Descongeladas</td><td>10</td></tr>
+                        <tr><td>Learning Rate</td><td>0.0001</td></tr>
+                        <tr><td>Batch Size</td><td>32</td></tr>
+                        <tr><td>Épocas Treinadas</td><td>14 / 50</td></tr>
+                    </table>
+                    <p style="font-size: 0.82rem; color: var(--text-light); margin-top: 8px;">Últimas 10 camadas descongeladas com learning rate menor para ajuste fino.</p>
+                    <div class="metric-highlight">
+                        <div class="metric-item">
+                            <div class="val">87,34%</div>
+                            <div class="name">Accuracy</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="val">90,38%</div>
+                            <div class="name">F1-Score</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="val">93,90%</div>
+                            <div class="name">AUC-ROC</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exp 3 -->
+            <div class="exp-card">
+                <div class="exp-header">Experimento 3 — DenseNet Fine-Tuning</div>
+                <div class="exp-body">
+                    <table class="config-table">
+                        <tr><td>Modelo Base</td><td>DenseNet121</td></tr>
+                        <tr><td>Estratégia</td><td>Fine-Tuning Parcial</td></tr>
+                        <tr><td>Camadas Descongeladas</td><td>20</td></tr>
+                        <tr><td>Learning Rate</td><td>0.0001</td></tr>
+                        <tr><td>Batch Size</td><td>16</td></tr>
+                        <tr><td>Épocas Treinadas</td><td>16 / 50</td></tr>
+                    </table>
+                    <p style="font-size: 0.82rem; color: var(--text-light); margin-top: 8px;">DenseNet121 com 20 camadas descongeladas e batch size menor para melhor generalização.</p>
+                    <div class="metric-highlight">
+                        <div class="metric-item">
+                            <div class="val" style="color: var(--accent);">91,51%</div>
+                            <div class="name">Accuracy</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="val" style="color: var(--accent);">93,23%</div>
+                            <div class="name">F1-Score</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="val" style="color: var(--accent);">96,78%</div>
+                            <div class="name">AUC-ROC</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Resultados -->
+<section id="resultados" style="background: white;">
+    <div class="container">
+        <h2>Resultados Comparativos</h2>
+
+        <div class="card">
+            <h3>Tabela Comparativa de Métricas</h3>
+            <div style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Métrica</th>
+                            <th>Exp 1 — ResNet50<br><small>Feature Extraction</small></th>
+                            <th>Exp 2 — ResNet50<br><small>Fine-Tuning</small></th>
+                            <th>Exp 3 — DenseNet121<br><small>Fine-Tuning</small></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Accuracy</td>
+                            <td>84,78%</td>
+                            <td>87,34%</td>
+                            <td class="best">91,51%</td>
+                        </tr>
+                        <tr>
+                            <td>Precision</td>
+                            <td class="best">94,03%</td>
+                            <td>86,08%</td>
+                            <td>92,88%</td>
+                        </tr>
+                        <tr>
+                            <td>Sensitivity (Recall)</td>
+                            <td>80,77%</td>
+                            <td class="best">95,13%</td>
+                            <td>93,59%</td>
+                        </tr>
+                        <tr>
+                            <td>Specificity</td>
+                            <td class="best">91,45%</td>
+                            <td>74,36%</td>
+                            <td>88,03%</td>
+                        </tr>
+                        <tr>
+                            <td>F1-Score</td>
+                            <td>86,90%</td>
+                            <td>90,38%</td>
+                            <td class="best">93,23%</td>
+                        </tr>
+                        <tr>
+                            <td>AUC-ROC</td>
+                            <td>93,19%</td>
+                            <td>93,90%</td>
+                            <td class="best">96,78%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="grid-3" style="margin-top: 24px;">
+            <!-- CM Exp 1 -->
+            <div class="card">
+                <h3 style="text-align: center;">Exp 1 — Matriz de Confusão</h3>
+                <div class="cm-grid">
+                    <div></div>
+                    <div class="cm-label">Pred Normal</div>
+                    <div class="cm-label">Pred Pneumonia</div>
+                    <div class="cm-label">Real Normal</div>
+                    <div class="cm-cell cm-tn">214</div>
+                    <div class="cm-cell cm-fp">20</div>
+                    <div class="cm-label">Real Pneumonia</div>
+                    <div class="cm-cell cm-fn">75</div>
+                    <div class="cm-cell cm-tp">315</div>
+                </div>
+            </div>
+
+            <!-- CM Exp 2 -->
+            <div class="card">
+                <h3 style="text-align: center;">Exp 2 — Matriz de Confusão</h3>
+                <div class="cm-grid">
+                    <div></div>
+                    <div class="cm-label">Pred Normal</div>
+                    <div class="cm-label">Pred Pneumonia</div>
+                    <div class="cm-label">Real Normal</div>
+                    <div class="cm-cell cm-tn">174</div>
+                    <div class="cm-cell cm-fp">60</div>
+                    <div class="cm-label">Real Pneumonia</div>
+                    <div class="cm-cell cm-fn">19</div>
+                    <div class="cm-cell cm-tp">371</div>
+                </div>
+            </div>
+
+            <!-- CM Exp 3 -->
+            <div class="card">
+                <h3 style="text-align: center;">Exp 3 — Matriz de Confusão</h3>
+                <div class="cm-grid">
+                    <div></div>
+                    <div class="cm-label">Pred Normal</div>
+                    <div class="cm-label">Pred Pneumonia</div>
+                    <div class="cm-label">Real Normal</div>
+                    <div class="cm-cell cm-tn">206</div>
+                    <div class="cm-cell cm-fp">28</div>
+                    <div class="cm-label">Real Pneumonia</div>
+                    <div class="cm-cell cm-fn">25</div>
+                    <div class="cm-cell cm-tp">365</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Visualizações -->
+<section id="visualizacoes">
+    <div class="container">
+        <h2>Visualizações</h2>
+
+        <!-- Tabs for experiments -->
+        <div class="card">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab(event, 'tab-geral')">Comparativo Geral</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-exp1')">Experimento 1</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-exp2')">Experimento 2</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-exp3')">Experimento 3</button>
+            </div>
+
+            <!-- Tab Geral -->
+            <div id="tab-geral" class="tab-content active">
+                <div class="grid-2">
+                    <div class="img-container">
+                        <img src="results/comparacao_metricas.png" alt="Comparação de Métricas">
+                        <div class="caption">Comparação das métricas entre os 3 experimentos</div>
+                    </div>
+                    <div class="img-container">
+                        <img src="results/comparacao_curvas.png" alt="Comparação de Curvas ROC">
+                        <div class="caption">Curvas ROC comparativas</div>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="img-container">
+                        <img src="results/comparacao_matrizes.png" alt="Comparação de Matrizes de Confusão">
+                        <div class="caption">Matrizes de confusão lado a lado</div>
+                    </div>
+                    <div class="img-container">
+                        <img src="results/distribuicao_classes.png" alt="Distribuição de Classes">
+                        <div class="caption">Distribuição das classes no dataset</div>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="results/evolucao_metricas.png" alt="Evolução das Métricas">
+                    <div class="caption">Evolução das métricas ao longo do treinamento</div>
+                </div>
+            </div>
+
+            <!-- Tab Exp 1 -->
+            <div id="tab-exp1" class="tab-content">
+                <div class="grid-2">
+                    <div class="img-container">
+                        <img src="results/exp1/training_curves.png" alt="Curvas de Treinamento - Exp 1">
+                        <div class="caption">Curvas de Loss e Accuracy durante o treinamento</div>
+                    </div>
+                    <div class="img-container">
+                        <img src="results/exp1/confusion_matrix.png" alt="Matriz de Confusão - Exp 1">
+                        <div class="caption">Matriz de Confusão no conjunto de teste</div>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="img-container">
+                        <img src="results/exp1/roc_curve.png" alt="Curva ROC - Exp 1">
+                        <div class="caption">Curva ROC (AUC = 0.9319)</div>
+                    </div>
+                    <div class="img-container">
+                        <img src="results/exp1/prediction_examples.png" alt="Exemplos de Predições - Exp 1">
+                        <div class="caption">Exemplos de predições corretas e incorretas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Exp 2 -->
+            <div id="tab-exp2" class="tab-content">
+                <div class="grid-2">
+                    <div class="img-container">
+                        <img src="results/exp2/training_curves.png" alt="Curvas de Treinamento - Exp 2">
+                        <div class="caption">Curvas de Loss e Accuracy durante o treinamento</div>
+                    </div>
+                    <div class="img-container">
+                        <img src="results/exp2/confusion_matrix.png" alt="Matriz de Confusão - Exp 2">
+                        <div class="caption">Matriz de Confusão no conjunto de teste</div>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="img-container">
+                        <img src="results/exp2/roc_curve.png" alt="Curva ROC - Exp 2">
+                        <div class="caption">Curva ROC (AUC = 0.9390)</div>
+                    </div>
+                    <div class="img-container">
+                        <img src="results/exp2/prediction_examples.png" alt="Exemplos de Predições - Exp 2">
+                        <div class="caption">Exemplos de predições corretas e incorretas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Exp 3 -->
+            <div id="tab-exp3" class="tab-content">
+                <div class="grid-2">
+                    <div class="img-container">
+                        <img src="results/exp3/training_curves.png" alt="Curvas de Treinamento - Exp 3">
+                        <div class="caption">Curvas de Loss e Accuracy durante o treinamento</div>
+                    </div>
+                    <div class="img-container">
+                        <img src="results/exp3/confusion_matrix.png" alt="Matriz de Confusão - Exp 3">
+                        <div class="caption">Matriz de Confusão no conjunto de teste</div>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="img-container">
+                        <img src="results/exp3/roc_curve.png" alt="Curva ROC - Exp 3">
+                        <div class="caption">Curva ROC (AUC = 0.9678)</div>
+                    </div>
+                    <div class="img-container">
+                        <img src="results/exp3/prediction_examples.png" alt="Exemplos de Predições - Exp 3">
+                        <div class="caption">Exemplos de predições corretas e incorretas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Conclusão -->
+<section id="conclusao" style="background: white;">
+    <div class="container">
+        <h2>Conclusão</h2>
+
+        <div class="card" style="border-left: 4px solid var(--accent);">
+            <h3>Melhor Modelo: Experimento 3 — DenseNet121 (Fine-Tuning Parcial)</h3>
+            <p style="margin-top: 8px;">
+                O <strong>Experimento 3</strong> utilizando <strong>DenseNet121</strong> com fine-tuning parcial (20 camadas descongeladas) obteve os melhores resultados gerais, alcançando <strong>91,51% de accuracy</strong>, <strong>93,23% de F1-Score</strong> e <strong>96,78% de AUC-ROC</strong>. Este modelo apresentou o melhor equilíbrio entre sensibilidade (93,59%) e especificidade (88,03%), sendo o mais adequado para aplicação clínica.
+            </p>
+        </div>
+
+        <div class="grid-2" style="margin-top: 24px;">
+            <div class="card">
+                <h3>Principais Descobertas</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                        <strong>Fine-tuning supera Feature Extraction</strong> — Descongelar camadas melhora a performance significativamente
+                    </li>
+                    <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                        <strong>DenseNet121 supera ResNet50</strong> — A arquitetura com conexões densas se mostrou mais eficaz para este domínio
+                    </li>
+                    <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                        <strong>Early Stopping eficiente</strong> — Todos os modelos convergiram bem antes do limite de épocas
+                    </li>
+                    <li style="padding: 8px 0;">
+                        <strong>Class weights essenciais</strong> — O balanceamento das classes melhorou a performance em ambas as categorias
+                    </li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Análise por Experimento</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                        <strong>Exp 1:</strong> Alta precisão (94,03%) mas baixa sensibilidade (80,77%) — tende a ser conservador nas predições de pneumonia
+                    </li>
+                    <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                        <strong>Exp 2:</strong> Alta sensibilidade (95,13%) mas baixa especificidade (74,36%) — detecta bem pneumonia mas gera mais falsos positivos
+                    </li>
+                    <li style="padding: 8px 0;">
+                        <strong>Exp 3:</strong> Melhor equilíbrio geral entre todas as métricas, sendo o mais robusto e confiável
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 24px;">
+            <h3>Estrutura do Projeto</h3>
+            <div style="background: #f8f9fb; padding: 20px; border-radius: 8px; margin-top: 12px; font-family: 'Courier New', monospace; font-size: 0.88rem; line-height: 1.8;">
+                Trabalho_Final_PIVC/<br>
+                ├── config.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Configurações e hiperparâmetros</span><br>
+                ├── train.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Script de treinamento</span><br>
+                ├── evaluate.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Script de avaliação</span><br>
+                ├── utils.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Funções auxiliares</span><br>
+                ├── Trabalho_Final_PIVC.ipynb &nbsp;&nbsp;<span style="color: var(--text-light);"># Notebook Jupyter</span><br>
+                ├── data/chest_xray/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Dataset de raio-X</span><br>
+                │ &nbsp;&nbsp;├── train/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Imagens de treino</span><br>
+                │ &nbsp;&nbsp;├── val/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Imagens de validação</span><br>
+                │ &nbsp;&nbsp;└── test/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Imagens de teste</span><br>
+                └── results/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Resultados e gráficos</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── exp1/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Resultados do Experimento 1</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── exp2/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Resultados do Experimento 2</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── exp3/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Resultados do Experimento 3</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;└── comparison.csv &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);"># Tabela comparativa</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <p><strong>Trabalho Final — Processamento de Imagem e Visão Computacional (PIVC)</strong></p>
+        <p style="margin-top: 8px;">Classificação de Pneumonia em Raio-X de Tórax usando Transfer Learning</p>
+        <p style="margin-top: 4px;">Dataset: Chest X-Ray Images (Pneumonia) — Kaggle</p>
+    </div>
+</footer>
+
+<script>
+    function openTab(event, tabId) {
+        // Hide all tab contents
+        document.querySelectorAll('.tab-content').forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+        // Remove active from all buttons
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+        // Show selected tab
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('nav a').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            var target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

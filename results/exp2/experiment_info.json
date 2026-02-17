@@ -1,0 +1,18 @@
+{
+  "experiment": "exp2",
+  "config": {
+    "name": "Experimento 2 - ResNet50 (Fine-Tuning Parcial)",
+    "model_name": "resnet50",
+    "learning_rate": 0.0001,
+    "batch_size": 32,
+    "epochs": 50,
+    "unfreeze_layers": 10,
+    "optimizer": "Adam",
+    "weight_decay": 0.0001,
+    "description": "ResNet50 com as últimas 10 camadas descongeladas. Fine-tuning parcial com learning rate menor."
+  },
+  "total_training_time_seconds": 7987.193755865097,
+  "epochs_trained": 14,
+  "best_val_loss": 0.2400607168674469,
+  "seed": 42
+}

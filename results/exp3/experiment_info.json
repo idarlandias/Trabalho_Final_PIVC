@@ -1,0 +1,18 @@
+{
+  "experiment": "exp3",
+  "config": {
+    "name": "Experimento 3 - DenseNet121 (Fine-Tuning Parcial)",
+    "model_name": "densenet121",
+    "learning_rate": 0.0001,
+    "batch_size": 16,
+    "epochs": 50,
+    "unfreeze_layers": 20,
+    "optimizer": "Adam",
+    "weight_decay": 0.0001,
+    "description": "DenseNet121 com as últimas 20 camadas descongeladas. Fine-tuning parcial com batch size menor."
+  },
+  "total_training_time_seconds": 8937.26455116272,
+  "epochs_trained": 16,
+  "best_val_loss": 0.037691883742809296,
+  "seed": 42
+}

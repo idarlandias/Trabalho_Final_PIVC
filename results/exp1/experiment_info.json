@@ -1,0 +1,18 @@
+{
+  "experiment": "exp1",
+  "config": {
+    "name": "Experimento 1 - ResNet50 (Feature Extraction)",
+    "model_name": "resnet50",
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "epochs": 30,
+    "unfreeze_layers": 0,
+    "optimizer": "Adam",
+    "weight_decay": 0.0001,
+    "description": "ResNet50 com todas as camadas congeladas. Apenas o classificador final é treinado (Feature Extraction)."
+  },
+  "total_training_time_seconds": 5883.13098526001,
+  "epochs_trained": 11,
+  "best_val_loss": 0.1327921599149704,
+  "seed": 42
+}

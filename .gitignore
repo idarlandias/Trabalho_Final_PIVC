@@ -1,0 +1,15 @@
+# Dataset (muito grande para GitHub)
+data/
+
+# Modelos treinados (arquivos pesados)
+*.pth
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# OS
+Thumbs.db
+.DS_Store

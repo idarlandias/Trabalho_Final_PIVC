@@ -1,0 +1,4 @@
+﻿Experimento,Modelo,Learning Rate,Batch Size,Épocas,Camadas Descongeladas,Accuracy,Precision,Sensitivity,Specificity,F1-Score,AUC-ROC
+Experimento 1 - ResNet50 (Feature Extraction),resnet50,0.001,32,30,0,0.8478,0.9403,0.8077,0.9145,0.8690,0.9319
+Experimento 2 - ResNet50 (Fine-Tuning Parcial),resnet50,0.0001,32,50,10,0.8734,0.8608,0.9513,0.7436,0.9038,0.9390
+Experimento 3 - DenseNet121 (Fine-Tuning Parcial),densenet121,0.0001,16,50,20,0.9151,0.9288,0.9359,0.8803,0.9323,0.9678
