@@ -531,6 +531,7 @@
     <div class="container">
         <a href="#visao-geral">Visão Geral</a>
         <a href="#metodologia">Metodologia</a>
+        <a href="#arquiteturas">Arquiteturas</a>
         <a href="#experimentos">Experimentos</a>
         <a href="#resultados">Resultados</a>
         <a href="#visualizacoes">Visualizações</a>
@@ -671,6 +672,95 @@
     </div>
 </section>
 
+<!-- Arquiteturas -->
+<section id="arquiteturas">
+    <div class="container">
+        <h2>Arquiteturas e Técnicas Utilizadas</h2>
+
+        <!-- Transfer Learning -->
+        <div class="card">
+            <h3>Transfer Learning</h3>
+            <p>Transfer Learning é uma técnica de Deep Learning em que um modelo previamente treinado em uma tarefa de grande escala — neste projeto, classificação de 1.000 classes do <strong>ImageNet</strong> — tem seus pesos reutilizados como ponto de partida para uma nova tarefa. Em vez de treinar uma rede neural do zero (o que exigiria milhões de imagens e semanas de processamento), aproveitamos o conhecimento já adquirido pelo modelo sobre formas, texturas, bordas e padrões visuais genéricos.</p>
+            <p style="margin-top: 12px;">No domínio médico, como imagens de raio-X, o Transfer Learning é especialmente valioso porque os datasets são tipicamente menores e mais difíceis de obter. As representações aprendidas no ImageNet (bordas, gradientes, padrões) transferem-se bem para a detecção de padrões translúcidos da pneumonia.</p>
+            <div class="grid-2" style="margin-top: 20px;">
+                <div style="background: #eaf2f8; border-radius: 10px; padding: 20px; border-left: 4px solid var(--primary-light);">
+                    <div style="font-weight: 700; color: var(--primary); margin-bottom: 8px;">🔒 Feature Extraction</div>
+                    <p style="font-size: 0.88rem;">Todas as camadas convolucionais do backbone ficam <strong>congeladas</strong> (pesos não atualizados). Apenas o classificador final customizado é treinado. Funciona como um extrator de características fixo: a rede transforma a imagem em um vetor de features e o classificador aprende a mapear essas features para as classes do problema.</p>
+                </div>
+                <div style="background: #eafaf1; border-radius: 10px; padding: 20px; border-left: 4px solid var(--accent);">
+                    <div style="font-weight: 700; color: var(--accent); margin-bottom: 8px;">🔓 Fine-Tuning Parcial</div>
+                    <p style="font-size: 0.88rem;">As últimas N camadas do backbone são <strong>descongeladas</strong> e têm seus pesos ajustados com um learning rate menor. As camadas finais capturam features mais específicas ao problema, enquanto as iniciais (que detectam padrões mais genéricos como bordas) permanecem intactas para preservar o conhecimento transferido.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ResNet50 -->
+        <div class="card" style="margin-top: 0;">
+            <h3>ResNet50 — Redes com Conexões Residuais</h3>
+            <p>A ResNet50 (Residual Network com 50 camadas) foi proposta por He et al. (2016) para resolver o problema de <em>vanishing gradient</em> em redes muito profundas. O seu mecanismo central são os <strong>blocos residuais (skip connections)</strong>: em vez de aprender a transformação completa F(x), cada bloco aprende apenas o <em>resíduo</em> F(x) + x.</p>
+            <div style="background: #f8f9fb; border-radius: 8px; padding: 20px; margin-top: 16px; font-family: 'Courier New', monospace; font-size: 0.88rem; line-height: 1.8;">
+                <span style="color: var(--text-light);">// Bloco Residual (simplificado)</span><br>
+                saída = F(x) + x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);">// skip connection soma a entrada diretamente</span><br>
+                F(x) = Conv → BN → ReLU → Conv → BN&nbsp;&nbsp;<span style="color: var(--text-light);">// transformação residual</span>
+            </div>
+            <div style="margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; text-align: center;">
+                <div style="background: #f8f9fb; padding: 14px; border-radius: 8px;">
+                    <div style="font-weight: 700; color: var(--primary); font-size: 1.1rem;">~25M</div>
+                    <div style="font-size: 0.78rem; color: var(--text-light);">Parâmetros totais</div>
+                </div>
+                <div style="background: #f8f9fb; padding: 14px; border-radius: 8px;">
+                    <div style="font-weight: 700; color: var(--primary); font-size: 1.1rem;">50</div>
+                    <div style="font-size: 0.78rem; color: var(--text-light);">Camadas</div>
+                </div>
+                <div style="background: #f8f9fb; padding: 14px; border-radius: 8px;">
+                    <div style="font-weight: 700; color: var(--primary); font-size: 1.1rem;">2048</div>
+                    <div style="font-size: 0.78rem; color: var(--text-light);">Features de saída</div>
+                </div>
+            </div>
+            <p style="margin-top: 14px; font-size: 0.88rem; color: var(--text-light);"><strong>Adaptação neste projeto:</strong> A camada fully connected original (fc) foi substituída pelo classificador customizado de 3 camadas lineares com Dropout e ReLU. Foram realizados dois experimentos: Feature Extraction (todas as camadas congeladas, Exp 1) e Fine-Tuning Parcial com as últimas 10 camadas descongeladas (Exp 2).</p>
+        </div>
+
+        <!-- DenseNet121 -->
+        <div class="card" style="margin-top: 0;">
+            <h3>DenseNet121 — Redes com Conexões Densas</h3>
+            <p>A DenseNet121 (Densely Connected Network com 121 camadas) foi proposta por Huang et al. (2017). Ao contrário da ResNet onde a skip connection soma as features, na DenseNet cada camada recebe como entrada a <strong>concatenação de todas as saídas das camadas anteriores</strong> do mesmo bloco denso (Dense Block). Isto promove reutilização intensa de features e reduz drasticamente o número de parâmetros necessários.</p>
+            <div style="background: #f8f9fb; border-radius: 8px; padding: 20px; margin-top: 16px; font-family: 'Courier New', monospace; font-size: 0.88rem; line-height: 1.8;">
+                <span style="color: var(--text-light);">// Camada dentro de um Dense Block</span><br>
+                x<sub>l</sub> = H<sub>l</sub>([x<sub>0</sub>, x<sub>1</sub>, ..., x<sub>l-1</sub>])&nbsp;&nbsp;<span style="color: var(--text-light);">// concatena TODAS as camadas anteriores</span><br>
+                H<sub>l</sub>(·) = BN → ReLU → Conv(3×3)&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-light);">// transformação composta
+            </span></div>
+            <div style="margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; text-align: center;">
+                <div style="background: #f8f9fb; padding: 14px; border-radius: 8px;">
+                    <div style="font-weight: 700; color: var(--accent); font-size: 1.1rem;">~8M</div>
+                    <div style="font-size: 0.78rem; color: var(--text-light);">Parâmetros totais</div>
+                </div>
+                <div style="background: #f8f9fb; padding: 14px; border-radius: 8px;">
+                    <div style="font-weight: 700; color: var(--accent); font-size: 1.1rem;">121</div>
+                    <div style="font-size: 0.78rem; color: var(--text-light);">Camadas</div>
+                </div>
+                <div style="background: #f8f9fb; padding: 14px; border-radius: 8px;">
+                    <div style="font-weight: 700; color: var(--accent); font-size: 1.1rem;">1024</div>
+                    <div style="font-size: 0.78rem; color: var(--text-light);">Features de saída</div>
+                </div>
+            </div>
+            <p style="margin-top: 14px; font-size: 0.88rem; color: var(--text-light);"><strong>Por que DenseNet121 supera ResNet50 neste problema?</strong> Com apenas ~8M de parâmetros (vs. ~25M da ResNet50), a DenseNet sofre menos de <em>overfitting</em> em datasets restritos. A reutilização densa de features multiescala é especialmente eficaz para capturar as opacidades translúcidas e sutis da pneumonia em raio-X, onde múltiplos níveis de abstração precisam ser combinados.</p>
+            <p style="margin-top: 10px; font-size: 0.88rem; color: var(--text-light);"><strong>Adaptação neste projeto:</strong> A camada classifier original foi substituída pelo classificador customizado. Fine-Tuning Parcial com as últimas 20 camadas descongeladas (Exp 3), learning rate reduzido para 1×10⁻⁴ e batch size menor (16) para melhor estabilidade de gradiente.</p>
+        </div>
+
+        <!-- Referências -->
+        <div class="card" style="margin-top: 0;">
+            <h3>Referências das Arquiteturas</h3>
+            <ul style="padding-left: 20px; line-height: 2; font-size: 0.88rem;">
+                <li>He, K. et al. <em>Deep Residual Learning for Image Recognition.</em> CVPR, 2016. — ResNet</li>
+                <li>Huang, G. et al. <em>Densely Connected Convolutional Networks.</em> CVPR, 2017. — DenseNet</li>
+                <li>Deng, J. et al. <em>ImageNet: A Large-Scale Hierarchical Image Database.</em> CVPR, 2009. — ImageNet</li>
+                <li>Mooney, P. <em>Chest X-Ray Images (Pneumonia).</em> Kaggle, 2018. — <a href="https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia" target="_blank" style="color: var(--primary-light);">Dataset</a></li>
+                <li>PyTorch torchvision — <a href="https://pytorch.org/vision/stable/models.html" target="_blank" style="color: var(--primary-light);">Modelos pré-treinados utilizados</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
 <!-- Experimentos -->
 <section id="experimentos">
     <div class="container">
@@ -774,6 +864,56 @@
 <section id="resultados" style="background: white;">
     <div class="container">
         <h2>Resultados Comparativos</h2>
+
+        <!-- Equações das Métricas -->
+        <div class="card" style="margin-bottom: 24px;">
+            <h3>Equações das Métricas de Avaliação</h3>
+            <p style="margin-bottom: 18px;">A avaliação de modelos de classificação binária médica utiliza métricas derivadas da Matriz de Confusão, onde: <strong>TP</strong> = Verdadeiros Positivos (Pneumonia corretamente identificada), <strong>TN</strong> = Verdadeiros Negativos, <strong>FP</strong> = Falsos Positivos e <strong>FN</strong> = Falsos Negativos.</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+                <div style="background: #f8f9fb; border-radius: 10px; padding: 18px; border-top: 3px solid var(--primary);">
+                    <div style="font-weight: 700; color: var(--primary); margin-bottom: 8px;">Acurácia (Accuracy)</div>
+                    <div style="font-family: 'Courier New', monospace; font-size: 1rem; text-align: center; padding: 10px; background: white; border-radius: 6px; margin-bottom: 8px;">
+                        (TP + TN) / (TP + TN + FP + FN)
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-light);">Proporção de predições corretas sobre o total de amostras.</div>
+                </div>
+                <div style="background: #f8f9fb; border-radius: 10px; padding: 18px; border-top: 3px solid var(--primary);">
+                    <div style="font-weight: 700; color: var(--primary); margin-bottom: 8px;">Precisão (Precision)</div>
+                    <div style="font-family: 'Courier New', monospace; font-size: 1rem; text-align: center; padding: 10px; background: white; border-radius: 6px; margin-bottom: 8px;">
+                        TP / (TP + FP)
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-light);">Dos casos classificados como Pneumonia, quantos realmente são. Minimiza alarmes falsos.</div>
+                </div>
+                <div style="background: #f8f9fb; border-radius: 10px; padding: 18px; border-top: 3px solid #e74c3c;">
+                    <div style="font-weight: 700; color: #c0392b; margin-bottom: 8px;">Sensibilidade (Recall / Sensitivity)</div>
+                    <div style="font-family: 'Courier New', monospace; font-size: 1rem; text-align: center; padding: 10px; background: white; border-radius: 6px; margin-bottom: 8px;">
+                        TP / (TP + FN)
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-light);">Dos casos reais de Pneumonia, quantos o modelo detectou. Crítica para minimizar falsos negativos (diagnósticos perdidos).</div>
+                </div>
+                <div style="background: #f8f9fb; border-radius: 10px; padding: 18px; border-top: 3px solid var(--primary);">
+                    <div style="font-weight: 700; color: var(--primary); margin-bottom: 8px;">Especificidade (Specificity)</div>
+                    <div style="font-family: 'Courier New', monospace; font-size: 1rem; text-align: center; padding: 10px; background: white; border-radius: 6px; margin-bottom: 8px;">
+                        TN / (TN + FP)
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-light);">Dos casos normais, quantos foram corretamente identificados como normais. Minimiza tratamentos desnecessários.</div>
+                </div>
+                <div style="background: #f8f9fb; border-radius: 10px; padding: 18px; border-top: 3px solid var(--accent);">
+                    <div style="font-weight: 700; color: var(--accent); margin-bottom: 8px;">F1-Score</div>
+                    <div style="font-family: 'Courier New', monospace; font-size: 1rem; text-align: center; padding: 10px; background: white; border-radius: 6px; margin-bottom: 8px;">
+                        2 × (Precisão × Sensibilidade) / (Precisão + Sensibilidade)
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-light);">Média harmônica entre Precisão e Sensibilidade. Fundamental para datasets desbalanceados.</div>
+                </div>
+                <div style="background: #f8f9fb; border-radius: 10px; padding: 18px; border-top: 3px solid var(--accent);">
+                    <div style="font-weight: 700; color: var(--accent); margin-bottom: 8px;">AUC-ROC</div>
+                    <div style="font-family: 'Courier New', monospace; font-size: 1rem; text-align: center; padding: 10px; background: white; border-radius: 6px; margin-bottom: 8px;">
+                        AUC = ∫ TPR d(FPR)
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-light);">Área sob a Curva ROC (TPR vs FPR). Um AUC de 1.0 = classificador perfeito; 0.5 = aleatório. Independe do limiar de decisão.</div>
+                </div>
+            </div>
+        </div>
 
         <div class="card">
             <h3>Tabela Comparativa de Métricas</h3>
