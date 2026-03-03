@@ -572,6 +572,16 @@
             <p>Projeto de Transfer Learning com Redes Neurais Convolucionais para detecção automatizada de pneumonia em
                 imagens de raio-X</p>
             <span class="badge">Trabalho Final - PIVC</span>
+            <div style="margin-top: 18px; display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;">
+                <span
+                    style="background: rgba(255,255,255,0.15); padding: 8px 20px; border-radius: 20px; font-size: 0.9rem; backdrop-filter: blur(4px);">
+                    👤 <strong>Autor:</strong> Idarlan Rogério Dias Magalhães
+                </span>
+                <span
+                    style="background: rgba(255,255,255,0.15); padding: 8px 20px; border-radius: 20px; font-size: 0.9rem; backdrop-filter: blur(4px);">
+                    🎓 <strong>Curso:</strong> [CTE-IA] Inteligência Artificial — DC/UFC
+                </span>
+            </div>
         </div>
     </header>
 
@@ -599,7 +609,8 @@
                 <p>Desenvolver e comparar modelos de Deep Learning baseados em <strong>Transfer Learning</strong> para
                     classificação binária de imagens de raio-X de tórax entre <strong>Normal</strong> e
                     <strong>Pneumonia</strong>. O projeto explora diferentes estratégias de fine-tuning utilizando
-                    arquiteturas pré-treinadas no ImageNet.</p>
+                    arquiteturas pré-treinadas no ImageNet.
+                </p>
             </div>
 
             <div class="grid-3" style="margin-top: 24px;">
@@ -899,7 +910,8 @@
                     <p style="font-size: 0.88rem; margin-bottom: 10px;">Early Stopping é uma técnica de regularização
                         que interrompe o treinamento quando a performance no conjunto de validação para de melhorar,
                         prevenindo overfitting. <strong>A implementação foi desenvolvida do zero</strong> na classe
-                        <code>EarlyStopping</code> em <code>utils.py</code>, sem uso de biblioteca externa:</p>
+                        <code>EarlyStopping</code> em <code>utils.py</code>, sem uso de biblioteca externa:
+                    </p>
                     <div
                         style="background: #f8f9fb; padding: 14px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.82rem; line-height: 1.8; margin-bottom: 10px;">
                         <span style="color: var(--text-light);">// Lógica implementada (utils.py, linha ~249)</span><br>
@@ -943,7 +955,8 @@
                             <strong>congeladas</strong> (pesos não atualizados). Apenas o classificador final
                             customizado é treinado. Funciona como um extrator de características fixo: a rede transforma
                             a imagem em um vetor de features e o classificador aprende a mapear essas features para as
-                            classes do problema.</p>
+                            classes do problema.
+                        </p>
                     </div>
                     <div
                         style="background: #eafaf1; border-radius: 10px; padding: 20px; border-left: 4px solid var(--accent);">
@@ -953,7 +966,8 @@
                             <strong>descongeladas</strong> e têm seus pesos ajustados com um learning rate menor. As
                             camadas finais capturam features mais específicas ao problema, enquanto as iniciais (que
                             detectam padrões mais genéricos como bordas) permanecem intactas para preservar o
-                            conhecimento transferido.</p>
+                            conhecimento transferido.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -964,7 +978,8 @@
                 <p>A ResNet50 (Residual Network com 50 camadas) foi proposta por He et al. (2016) para resolver o
                     problema de <em>vanishing gradient</em> em redes muito profundas. O seu mecanismo central são os
                     <strong>blocos residuais (skip connections)</strong>: em vez de aprender a transformação completa
-                    F(x), cada bloco aprende apenas o <em>resíduo</em> F(x) + x.</p>
+                    F(x), cada bloco aprende apenas o <em>resíduo</em> F(x) + x.
+                </p>
                 <div
                     style="background: #f8f9fb; border-radius: 8px; padding: 20px; margin-top: 16px; font-family: 'Courier New', monospace; font-size: 0.88rem; line-height: 1.8;">
                     <span style="color: var(--text-light);">// Bloco Residual (simplificado)</span><br>
@@ -1661,7 +1676,8 @@
                         <div style="font-size: 1.6rem; margin-bottom: 8px;">1</div>
                         <strong>Jupyter Notebook</strong>
                         <p style="font-size: 0.82rem; color: var(--text-light); margin-top: 6px;">Abrir com
-                            <code>jupyter notebook</code> no terminal</p>
+                            <code>jupyter notebook</code> no terminal
+                        </p>
                     </div>
                     <div style="text-align: center; padding: 16px;">
                         <div style="font-size: 1.6rem; margin-bottom: 8px;">2</div>
